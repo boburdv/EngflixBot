@@ -30,7 +30,6 @@ bot.start(async (ctx) => {
                 );
                 });
                 
-})
 
 bot.on("text", async (ctx) => {
   const isSubsciribed = await checkSubscription(ctx);
