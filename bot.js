@@ -23,12 +23,12 @@ const checkSubscription = async (ctx) => {
 
 bot.start(async (ctx) => {
   const name = ctx.from.first_name || "Friend";
-<<<<<<< HEAD
+
 
   await ctx.reply(
     `Hello ${name}! 👋\n\nWelcome to @EngflixMovieBot!\n\nPlease send me your special ID code 🚀`,
     { parse_mode: "Markdown" },
-=======
+
   const imagePath = path.join(__dirname, "images", "engflix.jpg");
 
   await ctx.replyWithPhoto(
@@ -37,10 +37,8 @@ bot.start(async (ctx) => {
       caption: `Hello ${name}! 👋\n\nWelcome to @EngflixMovieBot!\n\nPlease send me your special ID code 🚀`,
       parse_mode: "Markdown",
     },
->>>>>>> b21ccceb90fe73122ca57232470081516d9b2f5d
-  );
-});
 
+  );
 bot.on("text", async (ctx) => {
   const isSubscribed = await checkSubscription(ctx);
 
