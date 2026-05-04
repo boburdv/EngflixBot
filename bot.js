@@ -49,7 +49,6 @@ const supabase = createClient(
 
                                                                                                                                           try {
                                                                                                                                               const input = ctx.message.text.trim();
-
                                                                                                                                                   const { data: movie, error } = await supabase
                                                                                                                                                         .from("movies")
                                                                                                                                                               .select("*")
