@@ -5,88 +5,86 @@ const { createClient } = require("@supabase/supabase-js");
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
-);
-
-const bot = new Telegraf(process.env.BOT_TOKEN);
-const CHANNEL_ID = process.env.CHANNEL_ID;
-const WEB_APP_URL = process.env.WEB_APP_URL;
-
-const checkSubscription = async (ctx) => {
-  try {
-    const member = await ctx.telegram.getChatMember(CHANNEL_ID, ctx.from.id);
-    return ["creator", "administrator", "member"].includes(member.status);
-  } catch (e) {
-    return false;
-  }
-};
-
-bot.start(async (ctx) => {
-    const name = ctx.from.first_name || "Friend";
-
-      await ctx.reply(
-          `Hello ${name}! 👋\n\nWelcome to @EngflixMovieBot!\n\nPlease send me your special ID code 🚀`,
-              { parse_mode: "Markdown" }
-                );
-                });
-                
-
-bot.on("text", async (ctx) => {
-  const isSubsciribed = await checkSubscription(ctx);
-
-  if (!isSubscribed) {
-    return ctx.reply(
-      "Please join our official channel",
-      Markup.inlineKeyboard([
-        [
-          Markup.button.url(
-            "📢 Subscribe",
-            `https://t.me/${CHANNEL_ID.replace("@", "")}`,
-          ),
-        ],
-        [Markup.button.callback("✅ I've Subscribed", "check_sub")],
-      ]),
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
     );
-  }
 
-  try {
-    const input = ctx.message.text.trim();
+    const bot = new Telegraf(process.env.BOT_TOKEN);
+    const CHANNEL_ID = process.env.CHANNEL_ID;
+    const WEB_APP_URL = process.env.WEB_APP_URL;
 
-    const { data: movie, error } = await supabase
-      .from("movies")
-      .select("*")
-      .eq("tmdb_id", input)
-      .maybeSingle();
+    const checkSubscription = async (ctx) => {
+      try {
+          const member = await ctx.telegram.getChatMember(CHANNEL_ID, ctx.from.id);
+              return ["creator", "administrator", "member"].includes(member.status);
+                } catch (e) {
+                    return false;
+                      }
+                      };
 
-    if (movie) {
-      await ctx.replyWithChatAction("typing");
+                      bot.start(async (ctx) => {
+                        const name = ctx.from.first_name || "Friend";
+                          await ctx.reply(
+                              `Hello ${name}! 👋\n\nWelcome to @EngflixMovieBot!\n\nPlease send me your special ID code 🚀`,
+                                  { parse_mode: "Markdown" }
+                                    );
+                                    });
 
-      const movieUrl = `${WEB_APP_URL}/watch/${movie.tmdb_id}`;
+                                    bot.on("text", async (ctx) => {
+                                      const isSubscribed = await checkSubscription(ctx);
 
-      ctx.reply(
-        `🎬 Title: ${movie.name || "Movie"}`,
-        Markup.inlineKeyboard([
-          [Markup.button.webApp("Watch Now 🍿", movieUrl)],
-        ]),
-      );
-    } else {
-      ctx.reply("❌ Sorry, this ID does not exist");
-    }
-  } catch (err) {
-    ctx.reply("⚠️ Something went wrong with the database.");
-  }
-});
+                                        if (!isSubscribed) {
+                                            return ctx.reply(
+                                                  "Please join our official channel",
+                                                        Markup.inlineKeyboard([
+                                                                [
+                                                                          Markup.button.url(
+                                                                                      "📢 Subscribe",
+                                                                                                  `https://t.me/${CHANNEL_ID.replace("@", "")}`
+                                                                                                            ),
+                                                                                                                    ],
+                                                                                                                            [Markup.button.callback("✅ I've Subscribed", "check_sub")],
+                                                                                                                                  ])
+                                                                                                                                      );
+                                                                                                                                        }
 
-bot.action("check_sub", async (ctx) => {
-  const isSubscribed = await checkSubscription(ctx);
-  if (isSubscribed) {
-    await ctx.answerCbQuery("Subscribed successfully ✅");
-    ctx.editMessageText("Thanks! Now you can send me the ID 🚀");
-  } else {
-    await ctx.answerCbQuery("⚠️ You haven't subscribed yet!", {
-      show_alert: true,
-    });
-  }
-});
+                                                                                                                                          try {
+                                                                                                                                              const input = ctx.message.text.trim();
 
-bot.launch().then(() => console.log("Bot ishga tushdi! ✅"));
+                                                                                                                                                  const { data: movie, error } = await supabase
+                                                                                                                                                        .from("movies")
+                                                                                                                                                              .select("*")
+                                                                                                                                                                    .eq("tmdb_id", input)
+                                                                                                                                                                          .maybeSingle();
+
+                                                                                                                                                                              if (movie) {
+                                                                                                                                                                                    await ctx.replyWithChatAction("typing");
+                                                                                                                                                                                          const movieUrl = `${WEB_APP_URL}/watch/${movie.tmdb_id}`;
+
+                                                                                                                                                                                                await ctx.reply(
+                                                                                                                                                                                                        `🎬 Title: ${movie.name || "Movie"}`,
+                                                                                                                                                                                                                Markup.inlineKeyboard([
+                                                                                                                                                                                                                          [Markup.button.webApp("Watch Now 🍿", movieUrl)],
+                                                                                                                                                                                                                                  ])
+                                                                                                                                                                                                                                        );
+                                                                                                                                                                                                                                            } else {
+                                                                                                                                                                                                                                                  await ctx.reply("❌ Sorry, this ID does not exist");
+                                                                                                                                                                                                                                                      }
+                                                                                                                                                                                                                                                        } catch (err) {
+                                                                                                                                                                                                                                                            await ctx.reply("⚠️ Something went wrong with the database.");
+                                                                                                                                                                                                                                                              }
+                                                                                                                                                                                                                                                              });
+
+                                                                                                                                                                                                                                                              bot.action("check_sub", async (ctx) => {
+                                                                                                                                                                                                                                                                const isSubscribed = await checkSubscription(ctx);
+                                                                                                                                                                                                                                                                  if (isSubscribed) {
+                                                                                                                                                                                                                                                                      await ctx.answerCbQuery("Subscribed successfully ✅");
+                                                                                                                                                                                                                                                                          await ctx.editMessageText("Thanks! Now you can send me the ID 🚀");
+                                                                                                                                                                                                                                                                            } else {
+                                                                                                                                                                                                                                                                                await ctx.answerCbQuery("⚠️ You haven't subscribed yet!", {
+                                                                                                                                                                                                                                                                                      show_alert: true,
+                                                                                                                                                                                                                                                                                          });
+                                                                                                                                                                                                                                                                                            }
+                                                                                                                                                                                                                                                                                            });
+
+                                                                                                                                                                                                                                                                                            bot.launch().then(() => console.log("Bot ishga tushdi! ✅"));
+                                                                                                                                                                                                                                                                                            
