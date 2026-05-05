@@ -37,9 +37,10 @@ const supabase = createClient(
                                                   "Please join our official channel",
                                                         Markup.inlineKeyboard([
                                                                 [
-                                                                          Markup.button.url(
-                                                                                      "📢 Subscribe",
-                                                                                                  `https://t.me/${CHANNEL_ID.replace("@", "")}`
+                                                                          Markup.button.url("📢 Subscribe", "https://t.me/EngflixMovie")
+
+                                                                                
+                                                                              
                                                                                                             ),
                                                                                                                     ],
                                                                                                                             [Markup.button.callback("✅ I've Subscribed", "check_sub")],
